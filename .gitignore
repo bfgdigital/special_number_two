@@ -1,0 +1,13 @@
+.DS_Store
+**/.DS_Store
+__pycache__/
+*.pyc
+.cache/
+.mplcache/
+
+.venv
+wip/prime_lattice_gradient_descent/venv/*
+wip/prime_lattice_gradient_descent/experiments/data/*
+
+prime_time/appendices/data_assets/datasets/*
+appendices/data_assets/datasets/*
