@@ -1,0 +1,304 @@
+% !TEX program = pdflatex
+\documentclass[11pt,a4paper]{article}
+
+% Encoding and fonts
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% Geometry and microtypography
+\usepackage[a4paper,margin=25mm]{geometry}
+\usepackage{microtype}
+
+% Paragraphing and numbering
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt}
+
+% Maths core
+\usepackage{mathtools}
+\usepackage{amssymb,amsthm}
+
+% Numbering (after amsmath via mathtools)
+\numberwithin{equation}{section}
+\numberwithin{figure}{section}
+\numberwithin{table}{section}
+
+% Lists and tables
+\usepackage{enumitem}
+\usepackage{booktabs}
+
+% Links and references
+\usepackage{hyperref}
+\hypersetup{
+  pdftitle    = {Special Number Two: The Parity Tensor and the Equilibrium Role of 2},
+  pdfauthor   = {Author},
+  pdfsubject  = {An accessible, lawful account of parity via the (M,A,P) tensor},
+  pdfkeywords = {parity, even, odd, prime complexity, pull, tensor, modulo two},
+  colorlinks  = true, linkcolor=black, citecolor=black, urlcolor=blue
+}
+\usepackage{xurl}
+\usepackage{bookmark}
+\usepackage{longtable}
+\usepackage{xparse}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\urlstyle{tt}
+\def\UrlBreaks{\do\/\do\_\do\.\do\-\do\#\do\&\do\=\do\?}
+
+% Theorems
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% Page breaks: start each numbered section on a fresh page
+\let\oldsection\section
+\NewDocumentCommand{\section}{s o m}{\IfBooleanTF{#1}{\oldsection*{#3}}{\clearpage\IfNoValueTF{#2}{\oldsection{#3}}{\oldsection[#2]{#3}}}}
+
+% Operators and macros
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\DeclareMathOperator{\PC}{PC}  % prime complexity (A)
+
+% Title
+\title{Special Number Two\\\large The Parity Tensor and the Equilibrium Role of 2}
+\author{}
+\date{\today}
+
+% Abstract style (matching prime_time Part I tone)
+\renewenvironment{abstract}{%
+  \thispagestyle{empty}%
+  \vspace*{0.08\textheight}%
+  \begin{center}%
+    \begin{minipage}{0.85\textwidth}%
+      \centering\bfseries Abstract\par\medskip
+}{%
+    \end{minipage}%
+  \end{center}%
+  \vspace*{0.06\textheight}%
+  \clearpage%
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper explains why integers are \emph{even} or \emph{odd} through a simple, lawful tensor built from three coordinates: multiplication \(M(n)=n\), prime complexity \(A(n)=\PC(n)=\sum a_i p_i\), and the pull \(P(n)=n-\PC(n)\). Reducing each coordinate \emph{modulo two} yields a parity tensor \(T(n)=(M\bmod 2,\,A\bmod 2,\,P\bmod 2)\). We prove that its structure is governed by one principle—\(M\equiv A+P\pmod 2\)—and one asymmetry: the prime \(2\). The result is a four-class classification that captures the equilibrium role of two and clarifies why the odd primes all line up with the signature \((1,1,0)\) while powers of two sit at \((0,0,0)\). Our presentation is educational by design, but every claim is mathematically precise and certified by a small, reusable Python proof DAG.
+\end{abstract}
+
+\tableofcontents
+
+\section{Reader's Orientation}
+Parity—``even or odd''—is the first property most of us learn about integers. Here we show that parity is not just a single bit: it is the front door to a \emph{tensor} that records how multiplication, addition of primes, and their difference interact modulo two.
+
+Two ideas carry the load:
+\begin{enumerate}[leftmargin=*]
+  \item The \textbf{three coordinates}: \(M(n)=n\), \(A(n)=\PC(n)=\sum a_i p_i\), and \(P(n)=n-\PC(n)\). They satisfy the identity \(M=A+P\).
+  \item The \textbf{mod-two view}: reduce each coordinate modulo two, obtaining \(T(n)=(M\bmod 2,\,A\bmod 2,\,P\bmod 2)\).
+\end{enumerate}
+With these in hand, patterns that look folkloric become theorems, and the uniqueness of the prime \(2\) becomes an equilibrium principle rather than a curiosity.
+
+\section{The Parity Tensor}
+\begin{definition}[Parity Tensor]
+For \(n\ge 2\), define
+\[
+T(n) := (\,M(n) \bmod 2,\; A(n) \bmod 2,\; P(n) \bmod 2\,) \in (\Z/2\Z)^3.
+\]
+\end{definition}
+
+Small examples illustrate the idea:
+\begin{center}
+\begin{tabular}{r r l c}
+\toprule
+\(n\) & Factorization & Coordinates \((M,A,P)\) & Tensor \(T(n)\) \\
+\midrule
+6  & \(2\cdot 3\)   & \((6,\,5,\,1)\)  & \((0,1,1)\) \\
+9  & \(3^2\)        & \((9,\,6,\,3)\)  & \((1,0,1)\) \\
+10 & \(2\cdot 5\)   & \((10,\,7,\,3)\) & \((0,1,1)\) \\
+12 & \(2^2\cdot 3\) & \((12,\,7,\,5)\) & \((0,1,1)\) \\
+27 & \(3^3\)        & \((27,\,9,\,18)\) & \((1,1,0)\) \\
+32 & \(2^5\)        & \((32,\,10,\,22)\) & \((0,0,0)\) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{The Fundamental Parity Theorem}
+Write the factorization of \(n\) as \(n=2^a\,\prod_{i=1}^k p_i^{a_i}\) where the \(p_i\) are distinct odd primes. Define the odd-exponent count
+\[
+\omega_{\mathrm{odd}}(n) := \#\{\,i : a_i \text{ is odd }\}.
+\]
+
+\begin{theorem}[Fundamental Parity]\label{thm:fund-parity}
+For every \(n\ge 2\),
+\[
+A(n) \equiv \omega_{\mathrm{odd}}(n) \pmod 2.
+\]
+\end{theorem}
+\begin{proof}
+Since \(A(n)=\sum a_i p_i\) and \(2\equiv 0\pmod 2\), the \(2\)-power contributes \(a\cdot 2\equiv 0\). Each odd prime contributes \(a_i p_i\equiv a_i\cdot 1\equiv a_i\pmod 2\). Summing over odd primes counts exactly those with odd exponent.
+\end{proof}
+
+\begin{corollary}[Parity of \(P\)]
+For all \(n\),
+\[
+P(n) \equiv n + A(n) \equiv n + \omega_{\mathrm{odd}}(n) \pmod 2.
+\]
+\end{corollary}
+
+\section{Worked Examples}
+We include short, concrete tables that you can read line-by-line. Each row shows the factorization, the three coordinates \((M,A,P)\), and the tensor \(T(n)=(M\bmod 2, A\bmod 2, P\bmod 2)\).
+
+\subsection*{Odd primes and powers of two}
+\begin{center}
+\begin{tabular}{r l l c}
+\toprule
+\(n\) & Factorization & \((M,A,P)\) & \(T(n)\) \\
+\midrule
+2  & \(2\)       & \((2,\,2,\,0)\)     & \((0,0,0)\) \\
+3  & \(3\)       & \((3,\,3,\,0)\)     & \((1,1,0)\) \\
+5  & \(5\)       & \((5,\,5,\,0)\)     & \((1,1,0)\) \\
+7  & \(7\)       & \((7,\,7,\,0)\)     & \((1,1,0)\) \\
+8  & \(2^3\)     & \((8,\,6,\,2)\)     & \((0,0,0)\) \\
+32 & \(2^5\)     & \((32,\,10,\,22)\)  & \((0,0,0)\) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Odd squares and odd semiprimes}
+\begin{center}
+\begin{tabular}{r l l c}
+\toprule
+\(n\) & Factorization & \((M,A,P)\) & \(T(n)\) \\
+\midrule
+9   & \(3^2\)     & \((9,\,6,\,3)\)    & \((1,0,1)\) \\
+25  & \(5^2\)     & \((25,\,10,\,15)\) & \((1,0,1)\) \\
+15  & \(3\cdot 5\)  & \((15,\,8,\,7)\)   & \((1,0,1)\) \\
+21  & \(3\cdot 7\)  & \((21,\,10,\,11)\) & \((1,0,1)\) \\
+35  & \(5\cdot 7\)  & \((35,\,12,\,23)\) & \((1,0,1)\) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Even semiprimes \(2p\) with \(p\) odd}
+\begin{center}
+\begin{tabular}{r l l c}
+\toprule
+\(n\) & Factorization & \((M,A,P)\) & \(T(n)\) \\
+\midrule
+6   & \(2\cdot 3\)   & \((6,\,5,\,1)\)  & \((0,1,1)\) \\
+10  & \(2\cdot 5\)   & \((10,\,7,\,3)\) & \((0,1,1)\) \\
+22  & \(2\cdot 11\)  & \((22,\,13,\,9)\) & \((0,1,1)\) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Checking \(A(n)\equiv \omega_{\mathrm{odd}}(n)\pmod 2\)}
+\begin{center}
+\begin{tabular}{r l c c c}
+\toprule
+\(n\) & Factorization & \(\omega_{\mathrm{odd}}(n)\) & \(A(n)\bmod 2\) & Match? \\
+\midrule
+12 & \(2^2\cdot 3\)       & 1 & 1 & ✓ \\
+18 & \(2\cdot 3^2\)       & 0 & 0 & ✓ \\
+45 & \(3^2\cdot 5\)       & 1 & 1 & ✓ \\
+75 & \(3\cdot 5^2\)       & 1 & 1 & ✓ \\
+90 & \(2\cdot 3^2\cdot 5\) & 1 & 1 & ✓ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{A single multiplication, worked end-to-end}
+Take \(m=12=2^2\cdot 3\) and \(n=15=3\cdot 5\). We compute modulo two:
+\begin{center}
+\begin{tabular}{l c c c}
+\toprule
+ & \(M\bmod 2\) & \(A\bmod 2\) & \(P\bmod 2\) \\
+\midrule
+\(m=12\) & 0 & 1 & 1 \\
+\(n=15\) & 1 & 0 & 1 \\
+\(mn=180\) & 0 & 1 & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Checks: \(M(mn)\equiv (0)(1)=0\); \(A(mn)\equiv 1+0=1\); \(P(mn)\equiv 0+1+0=1\). This illustrates \Cref{thm:fund-parity} and the relations of \S\,\ref{sec:mult-rel-mod2} below in a single glance.
+
+\section{The Four Parity Classes}
+The identity \(M=A+P\) implies \(M\equiv A+P\pmod 2\). This leaves only four possibilities for \(T(n)\):
+\begin{center}
+\begin{tabular}{c l l}
+\toprule
+Tensor & Condition & Examples \\
+\midrule
+\((0,0,0)\) & \(n\) even, \(\omega_{\mathrm{odd}}\) even & \(2, 4, 8, 18, 30\) \\
+\((0,1,1)\) & \(n\) even, \(\omega_{\mathrm{odd}}\) odd  & \(6, 10, 12, 14, 20\) \\
+\((1,0,1)\) & \(n\) odd, \(\omega_{\mathrm{odd}}\) even  & \(9, 15, 25, 49\) \\
+\((1,1,0)\) & \(n\) odd, \(\omega_{\mathrm{odd}}\) odd   & all odd primes \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{proposition}[Completeness]
+No other parity tensors occur: \((0,0,1),(0,1,0),(1,0,0),(1,1,1)\) are impossible.
+\end{proposition}
+\begin{proof}
+If \(M\equiv 0\) then \(A\equiv P\); if \(M\equiv 1\) then \(A\not\equiv P\). This eliminates the four excluded patterns.
+\end{proof}
+
+\section{Special Signatures and Why \texorpdfstring{$2$}{2} is Special}
+\begin{proposition}[Odd primes]
+Every odd prime \(p\) has \(T(p)=(1,1,0)\).
+\end{proposition}
+\begin{proof}
+For \(p\) odd, \(n\equiv 1\), and the only odd prime in the factorization has exponent one, so \(A\equiv 1\) and \(P\equiv 0\).
+\end{proof}
+
+\begin{proposition}[Powers of two]
+Every \(n=2^k\) has \(T(n)=(0,0,0)\).
+\end{proposition}
+\begin{proof}
+Here \(n\equiv 0\), there are no odd primes at all, so \(A\equiv 0\) and \(P\equiv 0\).
+\end{proof}
+
+\begin{proposition}[Odd prime squares and odd semiprimes]
+If \(n=p^2\) with \(p\) odd, or \(n=pq\) with distinct odd primes, then \(T(n)=(1,0,1)\).
+\end{proposition}
+\begin{proof}
+In both cases \(n\equiv 1\) and the number of odd primes with odd exponent is even (0 or 2), so \(A\equiv 0\) and \(P\equiv 1\).
+\end{proof}
+
+\paragraph{The equilibrium role of \(2\).}
+Two plays two roles at once: it flips the multiplicative bit \(M\bmod 2\), and it never contributes to \(\omega_{\mathrm{odd}}\). This decoupling makes \(2\) the pivot of the tensor: it sets the ``evenness'' of \(n\) without changing the odd-prime counter that governs \(A\bmod 2\). The four-class picture is the equilibrium of those two influences.
+
+\section{Multiplicative Relations modulo two}\label{sec:mult-rel-mod2}
+\begin{theorem}[Relations under multiplication]
+For all \(m,n\ge 2\),
+\[
+M(mn) \equiv M(m)\,M(n),\qquad A(mn) \equiv A(m)+A(n),\qquad P(mn) \equiv M(m)M(n)+A(m)+A(n)\pmod 2.
+\]
+\end{theorem}
+\begin{proof}
+The first is \(mn\equiv (m\bmod 2)(n\bmod 2)\). For \(A\), additivity modulo two follows from \Cref{thm:fund-parity} below, or directly from the odd-exponent count. The relation for \(P\) is \(P= M-A\).
+\end{proof}
+
+\section{Certification and Reproducibility}
+Every claim above is certified by an executable proof DAG:
+\begin{itemize}[leftmargin=*]
+  \item Core definitions \(M, A=\PC, P\) live in \texttt{new\_foundations/python/core.py}.
+  \item Parity modules live in \texttt{special\_number\_two/python/}. Run
+  \texttt{python -m special\_number\_two.python.certify} from the repo root.
+\end{itemize}
+This mirrors the intended Lean structure: one theorem per file with explicit imports. The same dependency graph can be used to order formal proofs.
+
+\section{Appendix: Extended Tables}
+This appendix is auto-generated from the certification modules. Regenerate with the Makefile target \texttt{make tables} in \texttt{special\_number\_two/paper/}.
+
+\input{appendices/large_parity_table.tex}
+
+\section*{Acknowledgments}
+We thank the reader for patience in a deliberately pedagogical exposition. The point was clarity without compromising correctness.
+
+\end{document}
