@@ -1,0 +1,10 @@
+\contentsline {section}{\numberline {1}Reader's Orientation}{2}{section.1}%
+\contentsline {section}{\numberline {2}The Parity Tensor}{2}{section.2}%
+\contentsline {section}{\numberline {3}The Fundamental Parity Theorem}{2}{section.3}%
+\contentsline {section}{\numberline {4}Worked Examples}{3}{section.4}%
+\contentsline {section}{\numberline {5}The Four Parity Classes}{4}{section.5}%
+\contentsline {section}{\numberline {6}Special Signatures and Why $2$ is Special}{4}{section.6}%
+\contentsline {paragraph}{The equilibrium role of \(2\).}{4}{section*.7}%
+\contentsline {section}{\numberline {7}Multiplicative Relations modulo two}{5}{section.7}%
+\contentsline {section}{\numberline {8}Certification and Reproducibility}{5}{section.8}%
+\contentsline {section}{\numberline {9}Appendix: Extended Tables}{5}{section.9}%
