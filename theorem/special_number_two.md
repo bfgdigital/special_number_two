@@ -10,13 +10,16 @@
 
 This document explores the parity structure of integers through the lens of the three-coordinate system (M, A, P). We show that the modulo-2 behavior of these coordinates forms a **parity tensor** that encodes fundamental factorization information and constrains the structure of integers.
 
-For background on the coordinate system, see `foundations.md`.
+For background on the coordinate system, see:
+
+- new_foundations/paper/new_foundations.tex (formal exposition of the M–A–P coordinates)
+- new_foundations/theorem/math_foundations.md (operator definitions and identities)
 
 ---
 
 ## 1. The Parity Tensor
 
-For any integer n ≥ 2, the coordinates (M, A, P) taken modulo 2 form a **parity tensor**:
+For any integer n ≥ 2, the coordinates (M, A, P) taken modulo 2 form a **parity tensor** (with A(n) = PC(n) per the foundations):
 
 **Definition 1.1 (Parity Tensor):**
 ```
@@ -39,7 +42,7 @@ For n with prime factorization n = 2^a × p₁^a₁ × p₂^a₂ × ⋯ × pₖ^
 
 This counts how many odd primes appear with odd exponents in the factorization.
 
-**Theorem 2.1 (Fundamental Parity Theorem):**
+**Theorem 2.1 (Fundamental Parity Theorem; cf. New Foundations):**
 
 For any integer n ≥ 2:
 
@@ -49,7 +52,7 @@ A(n) ≡ ω_odd(n) (mod 2)
 
 **Proof:**
 
-Since A(n) = PC(n) = Σᵢ aᵢ · pᵢ by definition, we have:
+Since A(n) = PC(n) = Σᵢ aᵢ · pᵢ (complete additivity in the foundations), we have:
 
 ```
 A(n) = a·2 + Σᵢ aᵢ·pᵢ    (where a is power of 2, pᵢ are odd primes)
